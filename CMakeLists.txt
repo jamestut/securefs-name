@@ -24,6 +24,7 @@ if (UNIX)
 
     add_compile_options(-pthread)
     link_libraries(-pthread)
+    link_libraries(-lbsd)
     link_libraries(${CMAKE_DL_LIBS})
 else ()
     add_definitions(-DNOMINMAX=1)

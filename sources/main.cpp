@@ -7,6 +7,9 @@
 #include <cstdlib>
 #include <configparser.hpp>
 #include <exception>
+#include <bsd/readpassphrase.h>
+
+#define PASSPHRASE_LENGTH 256
 
 using namespace securefs;
 using namespace securefsname;
@@ -54,12 +57,13 @@ int main(int argc, char ** argv) {
     }
     
     size_t rd;
-    const char * password = readline(false, "Password: ", &rd);
-    if(!password)
+    char password[PASSPHRASE_LENGTH];
+    if(!readpassphrase("Password: ", password, sizeof(password), 0))
     {
         fputs("Error reading password.\n", stderr);
         return 1;
     }
+    rd = strlen(password);
 
     ConfigParseResult config;
     read_config(argv[1], (void*)password, rd, config);

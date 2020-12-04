@@ -6,7 +6,9 @@ Almost all of the code in this program was copied from the main [`securefs` repo
 
 ## Compilation
 
-Compile using `CMake` version 3.0 or newer with GCC compiler that supports C++11 standard. Clang does not work as of now. Dependencies required are the same as `securefs`, minus Python 3 and FUSE.
+Compile using `CMake` version 3.0 or newer with GCC compiler that supports C++11 standard. Clang does not work as of now. Dependencies required are the same as `securefs`, minus Python 3 and FUSE, plus these:
+
+- libbsd
 
 This app is only tested on the x64 GNU/Linux platform.
 
