@@ -49,10 +49,23 @@ const char * readline(bool echo, const char * prompt, size_t* rd)
 }
 
 int main(int argc, char ** argv) {
-    if(argc != 2)
+    if(argc != 3)
     {
-        puts("Usage: securefsname <securefs.json file>");
+        puts("Usage: securefsname (e/d) <securefs.json file>");
         puts("This version only supports version 4 lite of securefs.");
+        return 0;
+    }
+
+    bool encrypt;
+    if(*argv[1] == 'e') 
+    {
+        encrypt = true;
+    } else if(*argv[1] == 'd') 
+    {
+        encrypt = false;
+    } else 
+    {
+        puts("Invalid mode. Expecting 'e' or 'd'.");
         return 0;
     }
     
@@ -66,18 +79,19 @@ int main(int argc, char ** argv) {
     rd = strlen(password);
 
     ConfigParseResult config;
-    read_config(argv[1], (void*)password, rd, config);
+    read_config(argv[2], (void*)password, rd, config);
     key_type name_key = get_name_key(config.master_key);
     AES_SIV name_cryptor(name_key.data(), name_key.size());
 
-    fputs("Enter file/folder name to be decrypted, separated by newline.\n",
-        stderr);
+    fprintf(stderr, "Enter file/folder name to be %s, separated by newline.\n",
+        encrypt ? "encrypted" : "decrypted");
     const char * line;
+    const auto edfn = encrypt ? lite::encrypt_path : lite::decrypt_path;
     while((line = readline(true, nullptr, &rd)))
     {
         try
         {
-            puts(lite::decrypt_path(name_cryptor, line).c_str());
+            puts(edfn(name_cryptor, line).c_str());
         }
         catch(const std::exception& e)
         {
